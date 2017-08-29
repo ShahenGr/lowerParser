@@ -31,5 +31,6 @@ class PracticeareaSpider(scrapy.Spider):
         yield scrapy.Request(response.url, callback=self.collectData, dont_filter=True)
 
     def collectData(self, response):
-        lowerSummary = response.xpath('//div[@class="lawyer-card-aligner"]/div[@class="lawyer-summary"]')
-        print lowerSummary
+        lowerSummary = response.xpath("//div[@class='clearfix']/div/div[@class='lawyer-summary -align-top']")
+        name = lowerSummary.xpath('//h5/a/span')
+
