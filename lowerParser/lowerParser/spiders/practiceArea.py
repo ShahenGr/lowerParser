@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
+from scrapy.spiders import CrawlSpider, Rule
+from scrapy.linkextractors import LinkExtractor
 
 
 class PracticeareaSpider(scrapy.Spider):
@@ -7,17 +9,27 @@ class PracticeareaSpider(scrapy.Spider):
     allowed_domains = ['http://bit.ly/2iENAQW']
     start_urls = ['http://bit.ly/2iENAQW']
 
-    BASE_URL = 'https://www.justia.com'
-
     def parse(self, response):
+        pass
         pArealist1 = response.xpath('//div[@id="practices-box-1"]/ul/li/a/@href')
         for link in pArealist1:
-            absolute_url = self.BASE_URL + link.extract()
-            yield scrapy.Request(absolute_url, callback=self.getStates)
-        pArealist2 = response.xpath('//div[@id="practices-box-2"]/ul/li/a/@href')
-        for link in pArealist2:
-            absolute_url = self.BASE_URL + link.extract()
-            yield scrapy.Request(absolute_url, callback=self.getStates)
+            absolute_url = response.urljoin(link.extract())
+            yield scrapy.Request(absolute_url, callback=self.getStates, dont_filter=True)
+        #pArealist2 = response.xpath('//div[@id="practices-box-2"]/ul/li/a/@href')
+        #for link in pArealist2:
+        #    absolute_url = response.urljoin(link.extract())
+         #   print 'ABSOL --> ', absolute_url
+         #   yield scrapy.Request(absolute_url, callback=self.getStates, dont_filter=True)
 
     def getStates(self, response):
-        print response.url
+        states = response.xpath('//div[@class="alphabetical-box"]/ul/li/a/@href')
+        for link in states:
+            absolute_url = response.urljoin(link.extract())
+            yield scrapy.Request(absolute_url, callback=self.getCities, dont_filter=True)
+
+    def getCities(self, response):
+        yield scrapy.Request(response.url, callback=self.collectData, dont_filter=True)
+
+    def collectData(self, response):
+        lowerSummary = response.xpath('//div[@class="lawyer-card-aligner"]/div[@class="lawyer-summary"]')
+        print lowerSummary
