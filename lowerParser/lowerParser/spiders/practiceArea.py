@@ -34,3 +34,6 @@ class PracticeareaSpider(scrapy.Spider):
         lowerSummary = response.xpath("//div[@class='clearfix']/div/div[@class='lawyer-summary -align-top']")
         name = lowerSummary.xpath('//h5/a/span')
 
+        #phone_number = x.xpath('//div[@class="lawyer-detailed-info clearfix"]/div/div/strong/a').extract()
+        #street = x.xpath('//div[@class="lawyer-detailed-info clearfix"]/div/div/span/span').extract()
+
