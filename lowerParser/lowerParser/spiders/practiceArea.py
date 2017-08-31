@@ -31,9 +31,17 @@ class PracticeareaSpider(scrapy.Spider):
         yield scrapy.Request(response.url, callback=self.collectData, dont_filter=True)
 
     def collectData(self, response):
-        lowerSummary = response.xpath("//div[@class='clearfix']/div/div[@class='lawyer-summary -align-top']")
-        name = lowerSummary.xpath('//h5/a/span')
-
-        #phone_number = x.xpath('//div[@class="lawyer-detailed-info clearfix"]/div/div/strong/a').extract()
-        #street = x.xpath('//div[@class="lawyer-detailed-info clearfix"]/div/div/span/span').extract()
+        number = 1
+        xCommand = '%s%s%s' % ('//div[@class="results-lawyers lawyer-card-group"]/div[@data-vars-value="',
+                               number ,
+                               '"]/div/div/div[@class="lawyer-summary -align-top"]')
+        #lowerSummary = response.xpath("//div[@class='clearfix']/div/div[@class='lawyer-summary -align-top']")
+        lowerSummary = response.xpath(xCommand)
+        name = lowerSummary.xpath('div/h5/a/span/text()').extract()
+        experience = lowerSummary.xpath('div/div/span/span/text()').extract()
+        wPlacess = lowerSummary.xpath('div/div/span/text()').extract()
+        phone_number = lowerSummary.xpath('div/div/div/strong/a/text()').extract()
+        streetAndOthers = lowerSummary.xpath('div/div/div/span/span/text()').extract()
+        nextPage = response.xpath('//div[@class="wrapper jcard has-padding-30 has-no-bottom-padding"]/div/span[@class="next"]/a/@href').extract()
+        print "Name --> ", name
 
